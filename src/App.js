@@ -10,19 +10,26 @@ function App() {
 
   const [search, setSearch] = useState("");
   const [myRecipes, setMyRecipes] = useState([]);
+  const [wordSubmitted, setWordSubmitted] = useState('avocado')
+
 
   useEffect(() => {
     const getRecipe = async () => {
-    const responce = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=avocado&app_id=${MY_ID}&app_key=${MY_KEY}`);
+    const responce = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${wordSubmitted}&app_id=${MY_ID}&app_key=${MY_KEY}`);
     const data = await responce.json();
     console.log(data.hits)
     setMyRecipes(data.hits)
     }
     getRecipe();
-  }, [])
+  }, [wordSubmitted])
 
   const myRecipeSearch = (e) => {
     setSearch(e.target.value)
+  }
+
+  const finalSearch = (e) => {
+    e.preventDefault();
+    setWordSubmitted(search)
   }
   return (
     <div className="App">
@@ -34,7 +41,7 @@ function App() {
       </div>
       
       <div className='container'>
-        <form>
+        <form onSubmit={finalSearch}>
           <input className='search' placeholder='Search...' onChange={myRecipeSearch} value={search}>
           </input>
         </form>
@@ -50,7 +57,8 @@ function App() {
           image={element.recipe.image} 
           cal={element.recipe.calories} 
           label={element.recipe.label} 
-          ingredients={element.recipe.ingredientLines}/>
+          ingredients={element.recipe.ingredientLines}
+          id={element.id}/>
         ))}
     </div>
   );
